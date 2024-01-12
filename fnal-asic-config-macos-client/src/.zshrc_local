@@ -1,0 +1,3 @@
+# constants
+export KRB_PRINCIPAL=jreden@FNAL.GOV
+
