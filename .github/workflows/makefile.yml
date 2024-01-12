@@ -1,0 +1,56 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+      - cron: '0 0 * * *'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+        matrix:
+            os: [ubuntu-latest, macos-latest]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Run check
+      run: |
+        make clean
+        make check
+
+    - name: Run check with bad OS
+      run: |
+        make clean
+        test ! `make check UNAME_OS=bad-os`
+
+    - name: Run test
+      run: |
+        make clean
+        make test
+
+    - name: Run test with bad OS
+      run: |
+        make clean
+        test ! `make test UNAME_OS=bad-os`
+
+    - name: Run staged install and uninstall
+      run: |
+        make clean
+        make install DESTDIR=.make HOMEDIR=home PREFIX=local
+        make uninstall DESTDIR=.make HOMEDIR=home PREFIX=local
+
+    - name: Run install and uninstall
+      run: |
+        make clean
+        make install
+        make uninstall
