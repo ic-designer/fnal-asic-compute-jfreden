@@ -28,8 +28,11 @@ private_clean:
 
 
 .PHONY: private_install
-private_install: $(foreach f, $(SRCDIR_CONFIG_FILES), $(DESTDIR)/$(LIBDIR)/$(PKGSUBDIR)/$(f) $(DESTDIR)/$(HOMEDIR)/$(f))
+private_install: \
+		$(foreach f, $(SRCDIR_CONFIG_FILES), $(DESTDIR)/$(LIBDIR)/$(PKGSUBDIR)/$(f) $(DESTDIR)/$(HOMEDIR)/$(f)) \
+		$(FNAL_ASIC_COMPUTE_REPO)
 	diff -r $(DESTDIR)/$(LIBDIR)/$(PKGSUBDIR) $(SRCDIR_ROOT)/src/
+	@$(MAKE) -C $(FNAL_ASIC_COMPUTE_REPO) check
 	@echo "INFO: Installation complete."
 	@echo
 
@@ -41,14 +44,16 @@ $(DESTDIR)/$(LIBDIR)/$(PKGSUBDIR)/%: $(SRCDIR_ROOT)/src/%
 
 
 .PHONY: private_test
-private_test:
+private_test: $(FNAL_ASIC_COMPUTE_REPO)
 	$(MAKE) install DESTDIR=$(abspath $(WORKDIR_TEST))/$(PKGSUBDIR)
+	$(MAKE) -C $(FNAL_ASIC_COMPUTE_REPO) test
 	$(MAKE) uninstall DESTDIR=$(abspath $(WORKDIR_TEST))/$(PKGSUBDIR)
 
 
 .PHONY: private_uninstall
-private_uninstall:
+private_uninstall: $(FNAL_ASIC_COMPUTE_REPO)
 	@echo "INFO: Uninstalling $(NAME)"
+	$(MAKE) -C $(FNAL_ASIC_COMPUTE_REPO) uninstall
 	@$(foreach s, $(SRCDIR_CONFIG_FILES), \
 		rm -v $(DESTDIR)/$(HOMEDIR)/$(s); \
 		test ! -e $(DESTDIR)/$(HOMEDIR)/$(s); \
