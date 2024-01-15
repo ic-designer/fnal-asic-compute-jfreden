@@ -1,3 +1,2 @@
 # constants
-export KRB_PRINCIPAL=jreden@FNAL.GOV
-
+export KRB5_PRINCIPAL=jfreden@FNAL.GOV
