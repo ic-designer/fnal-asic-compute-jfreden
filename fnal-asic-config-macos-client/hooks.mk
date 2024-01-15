@@ -1,5 +1,6 @@
 # Constants
 FNAL_ASIC_COMPUTE_VERSION := 0.3.1
+
 WORKDIR_ROOT ?= $(error ERROR: Undefined variable WORKDIR_ROOT)
 WORKDIR_DEPS ?= $(error ERROR: Undefined variable WORKDIR_DEPS)
 
@@ -11,7 +12,6 @@ $(FNAL_ASIC_COMPUTE_REPO):
 	curl -sL https://github.com/ic-designer/fnal-asic-compute/archive/refs/tags/$(FNAL_ASIC_COMPUTE_VERSION).tar.gz | tar xz -C $(WORKDIR_DEPS)
 	test -d $@
 	@echo
-
 
 # Targets
 .PHONY: hook-install
