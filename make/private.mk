@@ -2,9 +2,10 @@
 .DELETE_ON_ERROR:
 .SUFFIXES:
 MAKEFLAGS += --no-builtin-rules
+export
 
 # Constants
-override NAME := fnal-asic-compute-shared
+override NAME := fnal-asic-compute-user
 override VERSION := $(shell git describe --always --dirty --broken 2> /dev/null)
 
 # Paths
