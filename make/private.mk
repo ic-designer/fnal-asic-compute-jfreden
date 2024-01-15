@@ -1,66 +1,32 @@
-# Constants
-DESTDIR ?= $(error ERROR: Undefined variable DESTDIR)
-HOMEDIR ?= $(error ERROR: Undefined variable HOMEDIR)
-LIBDIR ?= $(error ERROR: Undefined variable LIBDIR)
-PREFIX ?= $(error ERROR: Undefined variable PREFIX)
-SRCDIR_ROOT ?= $(error ERROR: Undefined variable SRCDIR_ROOT)
-WORKDIR_ROOT ?= $(error ERROR: Undefined variable WORKDIR_ROOT)
+# Config
+.DELETE_ON_ERROR:
+.SUFFIXES:
+MAKEFLAGS += --no-builtin-rules
 
-override NAME := fnal-asic-compute-user
-override PKGSUBDIR = $(NAME)/$(SRCDIR_ROOT)
+# Constants
+override NAME := fnal-asic-compute-shared
 override VERSION := $(shell git describe --always --dirty --broken 2> /dev/null)
-override SRCDIR_CONFIG_FILES := $(shell cd $(SRCDIR_ROOT)/src && find . -type f)
-override WORKDIR_DEPS = $(WORKDIR_ROOT)/deps
-override WORKDIR_TEST = $(WORKDIR_ROOT)/test/$(NAME)/$(VERSION)
+
+# Paths
+DESTDIR =
+HOMEDIR = $(HOME)
+PREFIX = $(HOME)/.local
+LIBDIR = $(PREFIX)/lib
+WORKDIR_ROOT := $(CURDIR)/.make
+
+# Configuration
+UNAME_OS:=$(shell sh -c 'uname -s 2>/dev/null')
+ifeq ($(UNAME_OS),Darwin)
+    TARGET_CONFIG := fnal-asic-config-macos-client
+else ifeq ($(UNAME_OS),Linux)
+    TARGET_CONFIG := fnal-asic-config-linux-server
+else
+    $(error Unsupported operating system, $(UNAME_OS))
+endif
+SRCDIR_ROOT = $(TARGET_CONFIG)
 
 # Includes
 include make/deps.mk
-include $(BOXERBIRD.MK)
-
-# Targets
-.PHONY: private_clean
-private_clean:
-	@echo "INFO: Cleaning directories:"
-	@$(if $(wildcard $(WORKDIR_DEPS)), rm -rfv $(WORKDIR_DEPS))
-	@$(if $(wildcard $(WORKDIR_ROOT)), rm -rfv $(WORKDIR_ROOT))
-	@$(if $(wildcard $(WORKDIR_TEST)), rm -rfv $(WORKDIR_TEST))
-	@echo
-
-
-.PHONY: private_install
-private_install: \
-		$(foreach f, $(SRCDIR_CONFIG_FILES), $(DESTDIR)/$(LIBDIR)/$(PKGSUBDIR)/$(f) $(DESTDIR)/$(HOMEDIR)/$(f)) \
-		$(FNAL_ASIC_COMPUTE_REPO)
-	diff -r $(DESTDIR)/$(LIBDIR)/$(PKGSUBDIR) $(SRCDIR_ROOT)/src/
-	@$(MAKE) -C $(FNAL_ASIC_COMPUTE_REPO) check
-	@echo "INFO: Installation complete."
-	@echo
-
-$(DESTDIR)/$(HOMEDIR)/%: $(DESTDIR)/$(LIBDIR)/$(PKGSUBDIR)/%
-	$(boxerbird::install-as-link)
-
-$(DESTDIR)/$(LIBDIR)/$(PKGSUBDIR)/%: $(SRCDIR_ROOT)/src/%
-	$(boxerbird::install-as-copy)
-
-
-.PHONY: private_test
-private_test: $(FNAL_ASIC_COMPUTE_REPO)
-	$(MAKE) install DESTDIR=$(abspath $(WORKDIR_TEST))/$(PKGSUBDIR)
-	$(MAKE) -C $(FNAL_ASIC_COMPUTE_REPO) test
-	$(MAKE) uninstall DESTDIR=$(abspath $(WORKDIR_TEST))/$(PKGSUBDIR)
-
-
-.PHONY: private_uninstall
-private_uninstall: $(FNAL_ASIC_COMPUTE_REPO)
-	@echo "INFO: Uninstalling $(NAME)"
-	$(MAKE) -C $(FNAL_ASIC_COMPUTE_REPO) uninstall
-	@$(foreach s, $(SRCDIR_CONFIG_FILES), \
-		rm -v $(DESTDIR)/$(HOMEDIR)/$(s); \
-		test ! -e $(DESTDIR)/$(HOMEDIR)/$(s); \
-		rm -dv $(dir $(DESTDIR)/$(HOMEDIR)/$(s)) 2> /dev/null || true;\
-	)
-	@\rm -rdfv $(DESTDIR)/$(LIBDIR)/$(PKGSUBDIR) 2> /dev/null || true
-	@\rm -dv $(dir $(DESTDIR)/$(LIBDIR)/$(PKGSUBDIR)) 2> /dev/null || true
-	@\rm -dv $(DESTDIR)/$(LIBDIR) 2> /dev/null || true
-	@echo "INFO: Unistallation complete."
-	@echo
+include make/hooks.mk
+-include $(SRCDIR_ROOT)/hooks.mk
+include $(CONFIGURATOR_RULES.MK)

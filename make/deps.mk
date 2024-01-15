@@ -1,16 +1,17 @@
 # Constants
-WORKDIR_DEPS ?= $(error ERROR: Undefined variable WORKDIR_DEPS)
-
-BOXERBIRD_BRANCH := main
+CONFIGURATOR_RULES_BRANCH := main
 FNAL_ASIC_COMPUTE_VERSION := 0.3.1
 
+WORKDIR_ROOT ?= $(error ERROR: Undefined variable WORKDIR_ROOT)
+WORKDIR_DEPS = $(WORKDIR_ROOT)/deps
+
 # Dependencies
-override BOXERBIRD.MK := $(WORKDIR_DEPS)/make-boxerbird/boxerbird.mk
-$(BOXERBIRD.MK):
-	@echo "Loading Boxerbird..."
+override CONFIGURATOR_RULES.MK := $(WORKDIR_DEPS)/make-configurator-rules/make-configurator-rules.mk
+$(CONFIGURATOR_RULES.MK):
+	@echo "Loading FNAL ASIC Compute Rules..."
 	git clone --config advice.detachedHead=false --depth 1 \
-			https://github.com/ic-designer/make-boxerbird.git --branch $(BOXERBIRD_BRANCH) \
-			$(WORKDIR_DEPS)/make-boxerbird
+			https://github.com/ic-designer/make-configurator-rules.git --branch $(CONFIGURATOR_RULES_BRANCH) \
+			$(WORKDIR_DEPS)/make-configurator-rules
 	@echo
 
 override FNAL_ASIC_COMPUTE_REPO := $(WORKDIR_DEPS)/fnal-asic-compute-$(FNAL_ASIC_COMPUTE_VERSION)
