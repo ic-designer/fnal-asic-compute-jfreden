@@ -12,14 +12,14 @@ $(CONFIGURATOR_RULES.MK):
 	git clone --config advice.detachedHead=false --depth 1 \
 			https://github.com/ic-designer/make-configurator-rules.git --branch $(CONFIGURATOR_RULES_BRANCH) \
 			$(WORKDIR_DEPS)/make-configurator-rules
-	test -d $@
+	test -f $@
 	@echo
 
-override FNAL_ASIC_COMPUTE_REPO := $(WORKDIR_DEPS)/fnal-asic-compute-$(FNAL_ASIC_COMPUTE_VERSION)
+override FNAL_ASIC_COMPUTE_REPO := $(WORKDIR_DEPS)/fnal-asic-compute-$(FNAL_ASIC_COMPUTE_BRANCH)
 $(FNAL_ASIC_COMPUTE_REPO):
 	@echo "Loading FNAL ASIC compute..."
 	git clone --config advice.detachedHead=false --depth 1 \
 			https://github.com/ic-designer/fnal-asic-compute.git --branch $(FNAL_ASIC_COMPUTE_BRANCH) \
-			$(WORKDIR_DEPS)/fnal-asic-compute
+			$(WORKDIR_DEPS)/fnal-asic-compute-$(FNAL_ASIC_COMPUTE_BRANCH)
 	test -d $@
 	@echo
