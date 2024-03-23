@@ -1,0 +1,9 @@
+[user]
+	name = Jeff Fredenburg
+	email = jfreden@fnal.gov
+[color]
+	ui = auto
+[alias]
+	lol = log --graph --decorate --pretty=oneline --abbrev-commit
+	lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
+	unstage = 'reset HEAD --'
