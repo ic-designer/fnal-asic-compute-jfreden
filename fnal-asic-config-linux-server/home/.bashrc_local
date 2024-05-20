@@ -9,3 +9,20 @@ pathmunge () {
     esac
 }
 pathmunge /asic/cad/vscode/VSCode-linux-x64/bin
+
+#cron
+cronmunge () {
+    job=$1
+    tag=$2
+    cronjobs=$(crontab -l 2>/dev/null)
+    case "$cronjobs" in
+        *"$job $tag"*)
+            ;;
+        *)
+            filtered=$(crontab -l 2>/dev/null || true | grep -v "$tag")
+            (echo "$filtered"; echo "$job $tag") | crontab -
+            ;;
+    esac
+}
+cronmunge "@reboot ~/.local/lib/actions-runner/run.sh" "#TAG:actions-runner-reboot"
+cronmunge "@daily ~/.local/lib/actions-runner/run.sh" "#TAG:actions-runner-daily"
