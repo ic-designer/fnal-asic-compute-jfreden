@@ -30,5 +30,6 @@ SRCDIR_ROOT = $(TARGET_CONFIG)
 # Includes
 include make/deps.mk
 include make/hooks.mk
+include $(BOXERBIRD.MK)
 -include $(SRCDIR_ROOT)/hooks.mk
 include $(CONFIGURATOR_RULES.MK)
