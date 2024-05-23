@@ -1,4 +1,5 @@
 # Constants
+BOXERBIRD_BRANCH := main
 CONFIGURATOR_RULES_BRANCH := main
 FNAL_ASIC_COMPUTE_BRANCH := main
 
@@ -6,6 +7,16 @@ WORKDIR_ROOT ?= $(error ERROR: Undefined variable WORKDIR_ROOT)
 WORKDIR_DEPS = $(WORKDIR_ROOT)/deps
 
 # Dependencies
+override BOXERBIRD.MK := $(WORKDIR_DEPS)/make-boxerbird/boxerbird.mk
+$(BOXERBIRD.MK):
+	@echo "INFO: Fetching $@..."
+	git clone --config advice.detachedHead=false --depth 1 \
+			https://github.com/ic-designer/make-boxerbird.git --branch $(BOXERBIRD_BRANCH) \
+			$(WORKDIR_DEPS)/make-boxerbird
+	test -f $@
+	@echo "INFO: Fetching $@ completed."
+	@echo
+
 override CONFIGURATOR_RULES.MK := $(WORKDIR_DEPS)/make-configurator-rules/make-configurator-rules.mk
 $(CONFIGURATOR_RULES.MK):
 	@echo "Loading FNAL ASIC Compute Rules..."
