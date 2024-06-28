@@ -16,8 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - YYYY-MM-DD
 ### Added
-- Initial user configuration for MacOS Client
-- Initial user configuration for Scientific Linux Server
+- Initial user configuration for MacOS Client.
+- Initial user configuration for Scientific Linux Server.
+- Created local ssh config files.
 ### Changed
 ### Deprecated
 ### Fixed
