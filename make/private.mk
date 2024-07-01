@@ -39,9 +39,9 @@ include $(CONFIGURATOR_RULES.MK)
 
 # Targets
 .PHONY: private_test
-private_test: test-vnctools-makefile
+private_test: test-makefile
 	printf "\e[1;32mPassed Tests\e[0m\n"
 
 ifdef bowerbird::test::generate-runner
-    $(call bowerbird::test::generate-runner,test-vnctools-makefile,test/makefile)
+    $(call bowerbird::test::generate-runner,test-makefile,test/makefile)
 endif
