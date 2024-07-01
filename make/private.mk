@@ -7,8 +7,11 @@ MAKEFLAGS += --no-builtin-variables
 MAKEFLAGS += --warn-undefined-variablesz
 
 # Constants
-override NAME := fnal-asic-compute-user
-override VERSION := $(shell git describe --always --dirty --broken 2> /dev/null)
+NAME := fnal-asic-compute-user
+VERSION := $(shell git describe --always --dirty --broken 2> /dev/null)
+WORKDIR_ROOT := $(CURDIR)/.make
+WORKDIR_DEPS = $(WORKDIR_ROOT)/deps
+WORKDIR_TEST = $(WORKDIR_ROOT)/test/$(NAME)/$(VERSION)
 
 # Paths
 DESTDIR =
@@ -16,9 +19,8 @@ HOMEDIR = $(HOME)
 PREFIX = $(HOME)/.local
 BINDIR = $(PREFIX)/bin
 LIBDIR = $(PREFIX)/lib
-WORKDIR_ROOT := $(CURDIR)/.make
 
-# Configuration
+# Autodetect
 UNAME_OS:=$(shell sh -c 'uname -s 2>/dev/null')
 ifeq ($(UNAME_OS),Darwin)
     TARGET_CONFIG := fnal-asic-config-macos-client
