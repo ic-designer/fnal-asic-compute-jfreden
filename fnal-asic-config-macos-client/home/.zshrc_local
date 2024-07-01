@@ -1,2 +1,10 @@
 # constants
 export KRB5_PRINCIPAL=jfreden@FNAL.GOV
+
+# brew
+pathmunge $HOME/.local/lib/homebrew/bin
+
+# pyenv
+export PYENV_ROOT=$HOME/.local/lib/pyenv
+[[ -d $PYENV_ROOT/bin ]] && pathmunge $PYENV_ROOT/bin
+eval "$(pyenv init -)"
