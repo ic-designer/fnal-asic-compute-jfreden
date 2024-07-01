@@ -1,12 +1,17 @@
 # Config
+export
 .DELETE_ON_ERROR:
 .SUFFIXES:
 MAKEFLAGS += --no-builtin-rules
-export
+MAKEFLAGS += --no-builtin-variables
+MAKEFLAGS += --warn-undefined-variablesz
 
 # Constants
-override NAME := fnal-asic-compute-user
-override VERSION := $(shell git describe --always --dirty --broken 2> /dev/null)
+NAME := fnal-asic-compute-user
+VERSION := $(shell git describe --always --dirty --broken 2> /dev/null)
+WORKDIR_ROOT := $(CURDIR)/.make
+WORKDIR_DEPS = $(WORKDIR_ROOT)/deps
+WORKDIR_TEST = $(WORKDIR_ROOT)/test/$(NAME)/$(VERSION)
 
 # Paths
 DESTDIR =
@@ -14,9 +19,8 @@ HOMEDIR = $(HOME)
 PREFIX = $(HOME)/.local
 BINDIR = $(PREFIX)/bin
 LIBDIR = $(PREFIX)/lib
-WORKDIR_ROOT := $(CURDIR)/.make
 
-# Configuration
+# Autodetect
 UNAME_OS:=$(shell sh -c 'uname -s 2>/dev/null')
 ifeq ($(UNAME_OS),Darwin)
     TARGET_CONFIG := fnal-asic-config-macos-client
@@ -30,6 +34,14 @@ SRCDIR_ROOT = $(TARGET_CONFIG)
 # Includes
 include make/deps.mk
 include make/hooks.mk
-include $(BOXERBIRD.MK)
--include $(SRCDIR_ROOT)/hooks.mk
 include $(CONFIGURATOR_RULES.MK)
+-include $(SRCDIR_ROOT)/hooks.mk
+
+# Targets
+.PHONY: private_test
+private_test: test-makefile
+	printf "\e[1;32mPassed Tests\e[0m\n"
+
+ifdef bowerbird::test::generate-runner
+    $(call bowerbird::test::generate-runner,test-makefile,test/makefile)
+endif
