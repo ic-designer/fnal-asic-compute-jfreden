@@ -1,8 +1,10 @@
 # Config
+export
 .DELETE_ON_ERROR:
 .SUFFIXES:
 MAKEFLAGS += --no-builtin-rules
-export
+MAKEFLAGS += --no-builtin-variables
+MAKEFLAGS += --warn-undefined-variablesz
 
 # Constants
 override NAME := fnal-asic-compute-user
