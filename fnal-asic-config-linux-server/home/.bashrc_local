@@ -9,3 +9,8 @@ pathmunge () {
     esac
 }
 pathmunge /asic/cad/vscode/VSCode-linux-x64/bin
+
+# pyenv
+export PYENV_ROOT=$HOME/.local/lib/pyenv
+[[ -d $PYENV_ROOT/bin ]] && pathmunge $PYENV_ROOT/bin
+eval "$(pyenv init -)"
